@@ -1,5 +1,5 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import {
   Code2,
   Layers,
@@ -10,6 +10,7 @@ import {
   MessageCircle,
   ExternalLink,
   Sparkles,
+  Send,
 } from "lucide-react";
 
 import logo from "./assets/logo.png";
@@ -32,6 +33,8 @@ function Card({ children, className = "" }) {
 function CardContent({ children, className = "" }) {
   return <div className={className}>{children}</div>;
 }
+
+const phone = "5512981462722";
 
 const whatsappUrl =
   "https://wa.me/5512981462722?text=Olá,%20vim%20pelo%20portfólio%20da%20Defsoul%20Studio%20e%20quero%20fazer%20um%20orçamento.";
@@ -97,8 +100,48 @@ const services = [
 ];
 
 export default function App() {
+  const [form, setForm] = useState({
+    nome: "",
+    tipo: "Landing Page",
+    orcamento: "A definir",
+    mensagem: "",
+  });
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const smoothX = useSpring(mouseX, { stiffness: 80, damping: 20 });
+  const smoothY = useSpring(mouseY, { stiffness: 80, damping: 20 });
+
+  useEffect(() => {
+    const move = (e) => {
+      mouseX.set(e.clientX - 160);
+      mouseY.set(e.clientY - 160);
+    };
+
+    window.addEventListener("mousemove", move);
+    return () => window.removeEventListener("mousemove", move);
+  }, [mouseX, mouseY]);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const text = `Olá, vim pelo portfólio da Defsoul Studio e quero fazer um orçamento.%0A%0A` +
+      `Nome: ${form.nome}%0A` +
+      `Tipo de projeto: ${form.tipo}%0A` +
+      `Orçamento estimado: ${form.orcamento}%0A` +
+      `Mensagem: ${form.mensagem}`;
+
+    window.open(`https://wa.me/${phone}?text=${text}`, "_blank");
+  }
+
   return (
     <main className="min-h-screen overflow-hidden bg-black text-white">
+      <motion.div
+        style={{ x: smoothX, y: smoothY }}
+        className="pointer-events-none fixed z-50 hidden h-80 w-80 rounded-full bg-gradient-to-r from-blue-500/20 to-violet-600/20 blur-3xl md:block"
+      />
+
       <div className="fixed inset-0 -z-10 overflow-hidden bg-black">
         <div className="absolute left-[-160px] top-[-120px] h-[500px] w-[500px] rounded-full bg-blue-600/30 blur-[150px]" />
         <div className="absolute right-[-160px] top-[260px] h-[480px] w-[480px] rounded-full bg-violet-700/30 blur-[160px]" />
@@ -106,13 +149,13 @@ export default function App() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-[size:34px_34px] opacity-40" />
       </div>
 
-      <header className="fixed left-0 top-0 z-50 w-full border-b border-white/10 bg-black/40 backdrop-blur-2xl">
+      <header className="fixed left-0 top-0 z-40 w-full border-b border-white/10 bg-black/40 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <a href="#" className="flex items-center gap-4">
             <motion.img
               src={logo}
               alt="Defsoul Studio"
-              className="h-14 w-14 rounded-full object-cover shadow-[0_0_35px_rgba(96,165,250,0.75)]"
+              className="h-14 w-14 rounded-full object-cover"
               animate={{
                 boxShadow: [
                   "0 0 25px rgba(59,130,246,0.5)",
@@ -140,14 +183,14 @@ export default function App() {
             <a href="#servicos" className="transition hover:text-blue-300">
               Serviços
             </a>
-            <a href="#contato" className="transition hover:text-blue-300">
-              Contato
+            <a href="#orcamento" className="transition hover:text-blue-300">
+              Orçamento
             </a>
           </nav>
 
           <a href={whatsappUrl} target="_blank" rel="noreferrer">
             <Button className="rounded-full bg-gradient-to-r from-blue-500 to-violet-600 px-6 py-3 text-sm font-bold text-white transition hover:scale-105 hover:shadow-[0_0_35px_rgba(124,58,237,0.55)]">
-              Orçamento
+              Contato
             </Button>
           </a>
         </div>
@@ -189,18 +232,46 @@ export default function App() {
               </Button>
             </a>
 
-            <a href={whatsappUrl} target="_blank" rel="noreferrer">
+            <a href="#orcamento">
               <Button className="rounded-2xl border border-white/10 bg-white/5 px-8 py-4 font-bold text-white transition hover:border-violet-400/40 hover:bg-white/10 hover:shadow-[0_0_35px_rgba(124,58,237,0.35)]">
-                Entrar em Contato
+                Fazer Orçamento
               </Button>
             </a>
           </div>
 
           <motion.div
-            className="absolute right-0 top-20 hidden h-72 w-72 rounded-full border border-blue-500/30 md:block"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
-          />
+            className="absolute right-0 top-16 hidden h-[420px] w-[420px] md:block"
+            initial={{ opacity: 0, scale: 0.9, x: 40 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            transition={{ duration: 1 }}
+          >
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/25 via-violet-600/20 to-transparent blur-3xl" />
+
+            {[...Array(10)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute h-1.5 w-1.5 rounded-full bg-blue-300 shadow-[0_0_18px_rgba(96,165,250,0.9)]"
+                style={{
+                  left: `${10 + i * 9}%`,
+                  top: `${15 + (i % 5) * 14}%`,
+                }}
+                animate={{
+                  y: [0, -15, 0],
+                  opacity: [0.25, 1, 0.25],
+                  scale: [1, 1.4, 1],
+                }}
+                transition={{
+                  duration: 2.5 + i * 0.2,
+                  repeat: Infinity,
+                  delay: i * 0.15,
+                }}
+              />
+            ))}
+
+            <FloatingMockup img={jrImg} className="left-0 top-10" />
+            <FloatingMockup img={adegaImg} className="right-0 top-32" reverse />
+            <FloatingMockup img={academiaImg} className="bottom-4 left-20" />
+          </motion.div>
         </motion.div>
       </section>
 
@@ -216,6 +287,7 @@ export default function App() {
               key={project.title}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
               <Card className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] backdrop-blur-xl transition duration-500 hover:-translate-y-3 hover:border-blue-500/30 hover:shadow-[0_0_80px_rgba(59,130,246,0.18)]">
@@ -276,6 +348,7 @@ export default function App() {
               key={service.title}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ delay: index * 0.05 }}
               className="group rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition duration-500 hover:-translate-y-3 hover:border-violet-500/30 hover:shadow-[0_0_45px_rgba(124,58,237,0.25)]"
             >
@@ -291,39 +364,126 @@ export default function App() {
         </div>
       </section>
 
-      <section
-        id="contato"
-        className="mx-auto max-w-5xl px-6 py-24 text-center"
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-12 backdrop-blur-xl shadow-[0_0_70px_rgba(59,130,246,0.12)]"
-        >
-          <p className="text-sm uppercase tracking-[0.4em] text-blue-300">
-            Vamos criar?
-          </p>
+      <section id="orcamento" className="mx-auto max-w-7xl px-6 py-24">
+        <div className="grid gap-10 md:grid-cols-[0.9fr_1.1fr]">
+          <div>
+            <SectionTitle
+              eyebrow="Orçamento"
+              title="Conte sua ideia e vamos transformar em site."
+            />
+            <p className="mt-6 max-w-xl leading-8 text-white/60">
+              Preencha o formulário e ele abrirá seu WhatsApp com uma mensagem
+              pronta para enviar. Simples, rápido e direto.
+            </p>
+          </div>
 
-          <h2 className="mt-6 text-5xl font-black tracking-[-0.04em]">
-            Seu negócio merece um visual premium.
-          </h2>
+          <motion.form
+            onSubmit={handleSubmit}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl shadow-[0_0_70px_rgba(59,130,246,0.12)]"
+          >
+            <div className="grid gap-5">
+              <Input
+                label="Seu nome"
+                value={form.nome}
+                onChange={(e) => setForm({ ...form, nome: e.target.value })}
+                placeholder="Ex: Leonardo"
+                required
+              />
 
-          <p className="mx-auto mt-6 max-w-2xl text-white/60">
-            Entre em contato e vamos transformar sua ideia em um site moderno,
-            bonito e profissional.
-          </p>
+              <label className="grid gap-2">
+                <span className="text-sm text-white/60">Tipo de projeto</span>
+                <select
+                  value={form.tipo}
+                  onChange={(e) => setForm({ ...form, tipo: e.target.value })}
+                  className="rounded-2xl border border-white/10 bg-black/50 px-4 py-4 text-white outline-none transition focus:border-blue-400"
+                >
+                  <option>Landing Page</option>
+                  <option>Site Institucional</option>
+                  <option>Portfólio</option>
+                  <option>Cardápio Digital</option>
+                  <option>Redesign de Site</option>
+                  <option>Outro</option>
+                </select>
+              </label>
 
-          <a href={whatsappUrl} target="_blank" rel="noreferrer">
-            <Button className="mt-10 rounded-2xl bg-gradient-to-r from-blue-500 to-violet-600 px-8 py-4 font-bold text-white transition hover:scale-105 hover:shadow-[0_0_45px_rgba(124,58,237,0.5)]">
-              <div className="flex items-center">
-                <MessageCircle className="mr-2 h-5 w-5" />
-                Chamar no WhatsApp
-              </div>
-            </Button>
-          </a>
-        </motion.div>
+              <label className="grid gap-2">
+                <span className="text-sm text-white/60">
+                  Orçamento estimado
+                </span>
+                <select
+                  value={form.orcamento}
+                  onChange={(e) =>
+                    setForm({ ...form, orcamento: e.target.value })
+                  }
+                  className="rounded-2xl border border-white/10 bg-black/50 px-4 py-4 text-white outline-none transition focus:border-violet-400"
+                >
+                  <option>A definir</option>
+                  <option>Até R$ 500</option>
+                  <option>R$ 500 a R$ 1.000</option>
+                  <option>R$ 1.000 a R$ 2.000</option>
+                  <option>Acima de R$ 2.000</option>
+                </select>
+              </label>
+
+              <label className="grid gap-2">
+                <span className="text-sm text-white/60">Mensagem</span>
+                <textarea
+                  value={form.mensagem}
+                  onChange={(e) =>
+                    setForm({ ...form, mensagem: e.target.value })
+                  }
+                  placeholder="Fale um pouco sobre o projeto..."
+                  rows="5"
+                  className="resize-none rounded-2xl border border-white/10 bg-black/50 px-4 py-4 text-white outline-none transition placeholder:text-white/25 focus:border-blue-400"
+                />
+              </label>
+
+              <Button
+                type="submit"
+                className="mt-2 flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 to-violet-600 px-8 py-4 font-bold text-white transition hover:scale-[1.02] hover:shadow-[0_0_45px_rgba(124,58,237,0.5)]"
+              >
+                <Send className="mr-2 h-5 w-5" />
+                Enviar pelo WhatsApp
+              </Button>
+            </div>
+          </motion.form>
+        </div>
       </section>
+
+      <footer className="border-t border-white/10 px-6 py-8 text-center text-sm text-white/40">
+        © 2026 Defsoul Studio — Sites modernos e experiências digitais.
+      </footer>
     </main>
+  );
+}
+
+function FloatingMockup({ img, className = "", reverse = false }) {
+  return (
+    <motion.div
+      className={`absolute h-40 w-64 overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_0_40px_rgba(124,58,237,0.22)] backdrop-blur-xl ${className}`}
+      animate={{
+        y: reverse ? [0, 14, 0] : [0, -12, 0],
+        rotate: reverse ? [4, 2, 4] : [-3, -1, -3],
+      }}
+      transition={{ duration: reverse ? 5.5 : 5, repeat: Infinity }}
+    >
+      <img src={img} alt="" className="h-full w-full object-cover opacity-80" />
+    </motion.div>
+  );
+}
+
+function Input({ label, ...props }) {
+  return (
+    <label className="grid gap-2">
+      <span className="text-sm text-white/60">{label}</span>
+      <input
+        {...props}
+        className="rounded-2xl border border-white/10 bg-black/50 px-4 py-4 text-white outline-none transition placeholder:text-white/25 focus:border-blue-400"
+      />
+    </label>
   );
 }
 
