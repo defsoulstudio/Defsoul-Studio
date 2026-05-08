@@ -138,8 +138,8 @@ export default function App() {
   return (
     <main className="min-h-screen overflow-hidden bg-black text-white">
       <motion.div
-        style={{ x: smoothX, y: smoothY }}
-        className="pointer-events-none fixed z-50 hidden h-80 w-80 rounded-full bg-gradient-to-r from-blue-500/20 to-violet-600/20 blur-3xl md:block"
+  style={{ x: smoothX, y: smoothY }}
+  className="pointer-events-none fixed z-50 hidden h-32 w-32 rounded-full bg-gradient-to-r from-blue-500/10 to-violet-500/10 blur-2xl md:block"
       />
 
       <div className="fixed inset-0 -z-10 overflow-hidden bg-black">
