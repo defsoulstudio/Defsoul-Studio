@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Code2,
   Layers,
@@ -107,26 +107,11 @@ export default function App() {
     mensagem: "",
   });
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const smoothX = useSpring(mouseX, { stiffness: 80, damping: 20 });
-  const smoothY = useSpring(mouseY, { stiffness: 80, damping: 20 });
-
-  useEffect(() => {
-    const move = (e) => {
-      mouseX.set(e.clientX - 160);
-      mouseY.set(e.clientY - 160);
-    };
-
-    window.addEventListener("mousemove", move);
-    return () => window.removeEventListener("mousemove", move);
-  }, [mouseX, mouseY]);
-
   function handleSubmit(e) {
     e.preventDefault();
 
-    const text = `Olá, vim pelo portfólio da Defsoul Studio e quero fazer um orçamento.%0A%0A` +
+    const text =
+      `Olá, vim pelo portfólio da Defsoul Studio e quero fazer um orçamento.%0A%0A` +
       `Nome: ${form.nome}%0A` +
       `Tipo de projeto: ${form.tipo}%0A` +
       `Orçamento estimado: ${form.orcamento}%0A` +
@@ -137,11 +122,6 @@ export default function App() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-black text-white">
-      <motion.div
-  style={{ x: smoothX, y: smoothY }}
-  className="pointer-events-none fixed z-50 hidden h-32 w-32 rounded-full bg-gradient-to-r from-blue-500/10 to-violet-500/10 blur-2xl md:block"
-      />
-
       <div className="fixed inset-0 -z-10 overflow-hidden bg-black">
         <div className="absolute left-[-160px] top-[-120px] h-[500px] w-[500px] rounded-full bg-blue-600/30 blur-[150px]" />
         <div className="absolute right-[-160px] top-[260px] h-[480px] w-[480px] rounded-full bg-violet-700/30 blur-[160px]" />
@@ -240,37 +220,67 @@ export default function App() {
           </div>
 
           <motion.div
-            className="absolute right-0 top-16 hidden h-[420px] w-[420px] md:block"
-            initial={{ opacity: 0, scale: 0.9, x: 40 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            transition={{ duration: 1 }}
+            className="absolute right-10 top-24 hidden h-[420px] w-[420px] md:block"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.2 }}
           >
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/25 via-violet-600/20 to-transparent blur-3xl" />
+            <motion.div
+              className="absolute inset-0 rounded-full border border-blue-500/20"
+              animate={{
+                scale: [1, 1.05, 1],
+                rotate: [0, 180],
+              }}
+              transition={{
+                duration: 14,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            />
 
-            {[...Array(10)].map((_, i) => (
+            <motion.div
+              className="absolute inset-10 rounded-full border border-violet-500/20"
+              animate={{
+                scale: [1, 1.08, 1],
+                rotate: [180, 0],
+              }}
+              transition={{
+                duration: 18,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            />
+
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/10 to-violet-600/10 blur-3xl" />
+
+            <motion.img
+              src={logo}
+              alt="Defsoul"
+              className="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full object-cover shadow-[0_0_70px_rgba(124,58,237,0.5)]"
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 4, repeat: Infinity }}
+            />
+
+            {[...Array(12)].map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute h-1.5 w-1.5 rounded-full bg-blue-300 shadow-[0_0_18px_rgba(96,165,250,0.9)]"
                 style={{
-                  left: `${10 + i * 9}%`,
-                  top: `${15 + (i % 5) * 14}%`,
+                  left: `${8 + i * 7}%`,
+                  top: `${12 + (i % 5) * 16}%`,
                 }}
                 animate={{
-                  y: [0, -15, 0],
+                  y: [0, -12, 0],
                   opacity: [0.25, 1, 0.25],
-                  scale: [1, 1.4, 1],
+                  scale: [1, 1.35, 1],
                 }}
                 transition={{
-                  duration: 2.5 + i * 0.2,
+                  duration: 2.8 + i * 0.15,
                   repeat: Infinity,
-                  delay: i * 0.15,
+                  delay: i * 0.12,
                 }}
               />
             ))}
-
-            <FloatingMockup img={jrImg} className="left-0 top-10" />
-            <FloatingMockup img={adegaImg} className="right-0 top-32" reverse />
-            <FloatingMockup img={academiaImg} className="bottom-4 left-20" />
           </motion.div>
         </motion.div>
       </section>
@@ -457,21 +467,6 @@ export default function App() {
         © 2026 Defsoul Studio — Sites modernos e experiências digitais.
       </footer>
     </main>
-  );
-}
-
-function FloatingMockup({ img, className = "", reverse = false }) {
-  return (
-    <motion.div
-      className={`absolute h-40 w-64 overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_0_40px_rgba(124,58,237,0.22)] backdrop-blur-xl ${className}`}
-      animate={{
-        y: reverse ? [0, 14, 0] : [0, -12, 0],
-        rotate: reverse ? [4, 2, 4] : [-3, -1, -3],
-      }}
-      transition={{ duration: reverse ? 5.5 : 5, repeat: Infinity }}
-    >
-      <img src={img} alt="" className="h-full w-full object-cover opacity-80" />
-    </motion.div>
   );
 }
 
